@@ -16,13 +16,14 @@ class RegistrationController extends Controller
     /**
      * @Route("/register/", name="user_registration")
      */
-    public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $em)
-    {
-        
+    public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $em) {
+        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('home');
+        }
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
-        
+       
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user->setPassword($password);
@@ -41,19 +42,20 @@ class RegistrationController extends Controller
     /**
      * @Route("/home", name="home")
      */
-    public function adminAction () {
-        return new Response ("home");
+    public function homeAction () {
+        return $this->render(
+            'home/home.html.twig',
+            array('home' => 'Welcome to Homepage'));
     }
     
     
     /**
      * @Route("/hello/{name}", name="hello")
      */
-    public function helloAction($name)
-    {
-    if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-        throw $this->createAccessDeniedException();
-    }
-    return new Response ($name);
+    public function helloAction($name) { // it is only for check if admin rolne works correctly
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+        return new Response ($name);
     }
 }

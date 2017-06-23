@@ -10,8 +10,7 @@ security:
         our_db_provider:
             entity:
                 class: AppBundle:User
-                property: username
-            
+                property: username       
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -31,12 +30,15 @@ security:
             form_login:
                  login_path: /login
                  check_path: /login_check
-        
-            
+                   
             pattern:    ^/
             http_basic: ~
             provider: our_db_provider
             
     access_control:
         - { path: ^/home, roles: ROLE_USER }
-        - { path: ^/hello, roles: ROLE_USER }
+        - { path: ^/jsonCreate, roles: ROLE_ADMIN }
+        - { path: ^/jsonRead, roles: ROLE_ADMIN }
+        - { path: ^/jsonUpdate, roles: ROLE_ADMIN }
+        - { path: ^/jsonDelete, roles: ROLE_ADMIN }
+        - { path: ^/hello, roles: ROLE_ADMIN }

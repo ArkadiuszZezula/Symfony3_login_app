@@ -21,18 +21,21 @@ class User implements UserInterface, \Serializable
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=25, unique=true)
+     * @ORM\Column(type="string", length=40, unique=true)
+     * @Assert\Length(min=3)
+     * @Assert\Length(max=24)
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Assert\Length(min=6)
      */
     private $password;
 
     /**
      * @Assert\NotBlank()
-     * @Assert\Length(max=4096)
+     * @Assert\Length(max=60)
      */
     private $plainPassword;
     
@@ -70,6 +73,9 @@ class User implements UserInterface, \Serializable
 
     public function getRoles()
     {
+        if ($this->getId() == 1) {
+           return array('ROLE_ADMIN', 'ROLE_USER');
+        }
         return array('ROLE_USER');
     }
 
@@ -190,4 +196,6 @@ class User implements UserInterface, \Serializable
     {
         $this->plainPassword = $password;
     }
+
+
 }

@@ -11,30 +11,25 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SecurityController extends Controller
- {
+class SecurityController extends Controller {
+    
     /**
      * @Route("/login", name="login_route")
      */
-    public function loginAction(Request $request)
-    {
-    $authenticationUtils = $this->get('security.authentication_utils');
-    $error = $authenticationUtils->getLastAuthenticationError();
-    $lastUsername = $authenticationUtils->getLastUsername();
-
-    return $this->render(
-        'security/login.html.twig',
-        array(
-            'last_username' => $lastUsername,
-            'error'         => $error,
-        ));
+    public function loginAction(Request $request) {
+        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('home');
+        }
+        $authenticationUtils = $this->get('security.authentication_utils');
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+        return $this->render('security/login.html.twig', array('last_username' => $lastUsername, 'error' => $error));
     }
 
     /**
      * @Route("/logout", name="logout")
      */
-    public function logoutAction()
-    {
+    public function logoutAction() {
         session_destroy();
         return $this->redirectToRoute('homepage');
     }
@@ -42,8 +37,7 @@ class SecurityController extends Controller
     /**
      * @Route("/login_check", name="login_check")
      */
-    public function loginCheckAction()
-    {
+    public function loginCheckAction() {
     }
      
 }
